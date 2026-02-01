@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentine?</title>
+  <style>
+    :root { --pink: #ff4d6d; }
+
+    body{
+      height:100vh; margin:0;
+      display:flex; align-items:center; justify-content:center;
+      font-family: system-ui, -apple-system, Arial, sans-serif;
+      background: radial-gradient(circle at top, #ffe6ea, #ffd1dc);
+    }
+
+    .card{
+      width:min(680px, 92vw);
+      padding:32px 24px;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 18px 50px rgba(0,0,0,.12);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    h1{ margin:0 0 20px; font-size: clamp(24px, 3vw, 36px); }
+
+    .arena{
+      margin: 10px auto 0;
+      width: min(520px, 90%);
+      height: 210px;
+      position: relative;
+      border: 2px dashed rgba(255,77,109,.35);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fff, #fff7f9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 18px;
+      user-select:none;
+    }
+
+    button{
+      padding: 12px 22px;
+      border:none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor:pointer;
+    }
+
+    #yes{
+      background: var(--pink);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(255,77,109,.25);
+    }
+
+    #no{
+      background: #e5e5e5;
+      color: #333;
+      position:absolute; /* lo muoviamo dentro l'arena */
+      left: 60%;
+      top: 55%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hint{
+      margin-top: 14px;
+      color:#555;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>You will be my valentine? 💘</h1>
+
+    <div class="arena" id="arena">
+      <button id="yes">Yes</button>
+      <button id="no">No</button>
+    </div>
+
+    <div class="hint">P.S. try to click “No”… if you can 😈</div>
+  </div>
+
+  <script>
+    const arena = document.getElementById("arena");
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+
+    function moveNoButton() {
+      const a = arena.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+
+      // limiti: resta dentro l'arena con un piccolo margine
+      const padding = 10;
+      const maxX = a.width - b.width - padding;
+      const maxY = a.height - b.height - padding;
+
+      const x = padding + Math.random() * Math.max(0, maxX);
+      const y = padding + Math.random() * Math.max(0, maxY);
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+      noBtn.style.transform = `translate(0,0)`;
+    }
+
+    // scappa quando ci passi vicino
+    noBtn.addEventListener("mouseenter", moveNoButton);
+
+    // per renderlo ancora più impossibile: se provano ad inseguirlo
+    arena.addEventListener("mousemove", (e) => {
+      const rect = noBtn.getBoundingClientRect();
+      const dx = e.clientX - (rect.left + rect.width/2);
+      const dy = e.clientY - (rect.top + rect.height/2);
+      const distance = Math.hypot(dx, dy);
+
+      if (distance < 90) moveNoButton();
+    });
+
+    yesBtn.addEventListener("click", () => {
+      document.body.innerHTML = `
+        <div style="height:100vh;display:flex;align-items:center;justify-content:center;
+                    font-family:system-ui;background:#ffe6ea;text-align:center;padding:24px;">
+          <div style="background:#fff;padding:30px 24px;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.12);max-width:720px;">
+            <h1 style="margin:0 0 10px;">YAAAY! ❤️</h1>
+            <p style="margin:0;font-size:18px;">You just made my day 🥰</p>
+          </div>
+        </div>`;
+    });
+
+    // posizione iniziale random, così sembra già “vivo”
+    moveNoButton();
+  </script>
+</body>
+</html>
